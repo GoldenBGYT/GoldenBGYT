@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ИЗВЪНРЕДНО — БГ НОВИНИ 24</title>
+<style>
+  :root {
+    --red: #d90429;
+    --dark-red: #8d0801;
+    --navy: #0b132b;
+    --blue: #1c2541;
+    --gold: #ffc300;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: "Arial Black", "Segoe UI", Arial, sans-serif;
+    background: #000;
+    color: #fff;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .screen {
+    position: relative;
+    width: min(100vw, 177.78vh);
+    aspect-ratio: 16 / 9;
+    background:
+      radial-gradient(circle at 70% 40%, rgba(58, 80, 150, .55), transparent 55%),
+      radial-gradient(circle at 20% 80%, rgba(217, 4, 41, .25), transparent 50%),
+      linear-gradient(135deg, var(--navy), var(--blue) 60%, #3a0ca3);
+    overflow: hidden;
+  }
+  .screen.shake { animation: shake .5s cubic-bezier(.36,.07,.19,.97) 2; }
+  @keyframes shake {
+    10%, 90% { transform: translate(-2px, 1px); }
+    20%, 80% { transform: translate(4px, -2px); }
+    30%, 50%, 70% { transform: translate(-7px, 3px); }
+    40%, 60% { transform: translate(7px, -3px); }
+  }
+
+  .grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size: 4vmin 4vmin;
+    animation: gridmove 12s linear infinite;
+  }
+  @keyframes gridmove { to { background-position: 4vmin 4vmin; } }
+
+  .rays {
+    position: absolute; left: 68%; top: 42%;
+    width: 160%; aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    background: repeating-conic-gradient(rgba(255,255,255,.06) 0 6deg, transparent 6deg 18deg);
+    animation: spin 40s linear infinite;
+    opacity: .7;
+  }
+  @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+  .logo {
+    position: absolute; top: 3.5%; left: 3%;
+    display: flex; align-items: center; gap: .6em;
+    font-size: clamp(10px, 2vw, 28px);
+    letter-spacing: .05em;
+  }
+  .logo .box {
+    background: var(--red); padding: .15em .45em; border-radius: .15em;
+    box-shadow: 0 0 1em rgba(217,4,41,.6);
+  }
+  .live {
+    position: absolute; top: 3.5%; right: 3%;
+    display: flex; align-items: center; gap: .5em;
+    font-size: clamp(9px, 1.6vw, 22px);
+    background: rgba(0,0,0,.45); padding: .3em .7em; border-radius: .3em;
+  }
+  .live .dot {
+    width: .7em; height: .7em; border-radius: 50%; background: var(--red);
+    animation: blink 1s steps(2) infinite;
+  }
+  @keyframes blink { 50% { opacity: .15; } }
+  .clock { font-family: "Courier New", monospace; font-weight: 700; }
+
+  .character-wrap {
+    position: absolute; right: 8%; top: 9%;
+    width: 38%; height: 66%;
+    display: flex; align-items: flex-end; justify-content: center;
+  }
+  .frame {
+    position: absolute; inset: 0;
+    border: .35vmin solid rgba(255,255,255,.5);
+    border-radius: 1.2vmin;
+    background: radial-gradient(circle at 50% 35%, rgba(255,195,0,.25), rgba(0,0,0,.35) 70%);
+    box-shadow: 0 0 3vmin rgba(0,0,0,.6) inset;
+  }
+  .frame-label {
+    position: absolute; top: -0.1%; left: 50%; transform: translate(-50%, -55%);
+    background: var(--gold); color: #000;
+    font-size: clamp(8px, 1.3vw, 18px);
+    padding: .2em .8em; border-radius: .2em; white-space: nowrap;
+  }
+  svg.character {
+    position: relative; width: 82%; height: 92%;
+    animation: bob 2.4s ease-in-out infinite;
+    transform-origin: 50% 100%;
+    filter: drop-shadow(0 1.2vmin 1.2vmin rgba(0,0,0,.5));
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+    50% { transform: translateY(-2.5%) rotate(1.5deg); }
+  }
+  .screen.hit svg.character { animation: zoom .9s ease-out forwards; }
+  @keyframes zoom {
+    0% { transform: scale(1); }
+    25% { transform: scale(1.28) rotate(-4deg); }
+    100% { transform: scale(1.12) rotate(0); }
+  }
+  .eye-pupil { animation: look 4s ease-in-out infinite; }
+  @keyframes look {
+    0%, 40%, 100% { transform: translateX(0); }
+    50%, 80% { transform: translateX(6px); }
+  }
+  .brow { transition: transform .3s; }
+  .screen.hit .brow-l { transform: rotate(14deg) translate(4px, 6px); }
+  .screen.hit .brow-r { transform: rotate(-14deg) translate(-4px, 6px); }
+  .mouth { transform-origin: 200px 268px; }
+  .talking .mouth { animation: talk .18s ease-in-out infinite alternate; }
+  @keyframes talk { from { transform: scaleY(.35); } to { transform: scaleY(1.15); } }
+  .crumb { animation: crumbs 1.4s ease-in infinite; }
+  .crumb:nth-of-type(2) { animation-delay: .4s; }
+  .crumb:nth-of-type(3) { animation-delay: .8s; }
+  @keyframes crumbs {
+    0% { transform: translate(0, 0); opacity: 1; }
+    100% { transform: translate(var(--dx, 10px), 60px); opacity: 0; }
+  }
+
+  .breaking {
+    position: absolute; left: 0; bottom: 21%;
+    display: flex; align-items: stretch;
+    font-size: clamp(12px, 3.2vw, 46px);
+    transform: translateX(-110%);
+    transition: transform .6s cubic-bezier(.2,.9,.3,1.2);
+  }
+  .screen.on .breaking { transform: translateX(0); }
+  .breaking .tag {
+    background: var(--red); padding: .25em .7em;
+    animation: flash 1s steps(2) infinite;
+  }
+  @keyframes flash { 50% { background: var(--dark-red); } }
+  .breaking .sub {
+    background: #fff; color: var(--red); padding: .25em .7em;
+    clip-path: polygon(0 0, 100% 0, 92% 100%, 0 100%);
+    padding-right: 1.6em;
+  }
+
+  .lower-third {
+    position: absolute; left: 0; right: 0; bottom: 8%;
+    height: 13%;
+    background: linear-gradient(90deg, rgba(255,255,255,.97), rgba(230,230,240,.97));
+    color: var(--navy);
+    display: flex; align-items: center;
+    padding: 0 3%;
+    font-size: clamp(11px, 2.6vw, 38px);
+    line-height: 1.1;
+    transform: scaleY(0); transform-origin: bottom;
+    transition: transform .4s ease-out .2s;
+  }
+  .screen.on .lower-third { transform: scaleY(1); }
+  .headline .caps { color: var(--red); }
+  .cursor {
+    display: inline-block; width: .5em; height: 1em; background: var(--red);
+    vertical-align: -.1em; margin-left: .1em;
+    animation: blink .8s steps(2) infinite;
+  }
+
+  .ticker {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 8%;
+    background: var(--navy);
+    border-top: .4vmin solid var(--gold);
+    display: flex; align-items: center; overflow: hidden;
+    font-family: Arial, sans-serif; font-weight: 700;
+    font-size: clamp(9px, 1.7vw, 24px);
+  }
+  .ticker .label {
+    flex: none; background: var(--gold); color: #000; height: 100%;
+    display: flex; align-items: center; padding: 0 1.2em; z-index: 1;
+  }
+  .ticker .track {
+    white-space: nowrap; padding-left: 100%;
+    animation: ticker 28s linear infinite;
+  }
+  @keyframes ticker { to { transform: translateX(-100%); } }
+
+  .flash-overlay {
+    position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none;
+  }
+  .screen.hit .flash-overlay { animation: whiteflash .5s ease-out; }
+  @keyframes whiteflash { 0% { opacity: .85; } 100% { opacity: 0; } }
+
+  .start {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2vmin;
+    background: rgba(0,0,0,.72);
+    backdrop-filter: blur(4px);
+    z-index: 10;
+    transition: opacity .4s;
+  }
+  .start.hidden { opacity: 0; pointer-events: none; }
+  .start button {
+    font: inherit; font-size: clamp(14px, 3vw, 40px);
+    color: #fff; background: var(--red);
+    border: none; border-radius: 1vmin; padding: .5em 1.4em; cursor: pointer;
+    box-shadow: 0 0 0 0 rgba(217,4,41,.7);
+    animation: pulse 1.6s infinite;
+  }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 2.5vmin rgba(217,4,41,0); } 100% { box-shadow: 0 0 0 0 rgba(217,4,41,0); } }
+  .start p { font-family: Arial, sans-serif; font-weight: 400; opacity: .75; font-size: clamp(10px, 1.4vw, 18px); text-align: center; padding: 0 5%; }
+
+  .replay {
+    position: absolute; top: 12%; left: 3%;
+    font: inherit; font-size: clamp(8px, 1.1vw, 15px);
+    background: rgba(255,255,255,.12); color: #fff;
+    border: 1px solid rgba(255,255,255,.3); border-radius: .4em;
+    padding: .35em .8em; cursor: pointer; z-index: 5;
+    opacity: 0; transition: opacity .3s;
+  }
+  .screen.done .replay { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="screen" id="screen">
+  <div class="rays"></div>
+  <div class="grid"></div>
+
+  <div class="logo"><span class="box">БГ</span> НОВИНИ 24</div>
+  <div class="live"><span class="dot"></span> НА ЖИВО <span class="clock" id="clock">00:00</span></div>
+
+  <div class="character-wrap">
+    <div class="frame"><div class="frame-label">ИЗДИРВАН</div></div>
+    <svg class="character" viewBox="0 0 400 460" aria-label="Анимационен персонаж">
+      <ellipse cx="200" cy="448" rx="120" ry="10" fill="rgba(0,0,0,.35)"/>
+      <path d="M70 460 Q80 360 200 345 Q320 360 330 460 Z" fill="#7b2cbf"/>
+      <path d="M170 350 L200 400 L230 350 Z" fill="#ffc300"/>
+      <text x="200" y="440" text-anchor="middle" font-size="34" font-family="Arial Black" fill="#ffc300">№1</text>
+      <rect x="178" y="300" width="44" height="55" rx="10" fill="#7cc576"/>
+      <ellipse cx="200" cy="200" rx="135" ry="130" fill="#8ee07f"/>
+      <ellipse cx="72" cy="205" rx="22" ry="34" fill="#7cc576"/>
+      <ellipse cx="328" cy="205" rx="22" ry="34" fill="#7cc576"/>
+      <path d="M85 130 Q100 40 200 55 Q300 40 315 130 Q290 95 255 105 Q230 70 200 95 Q170 70 145 105 Q110 95 85 130 Z" fill="#ff6d00"/>
+      <ellipse cx="150" cy="185" rx="34" ry="38" fill="#fff"/>
+      <ellipse cx="250" cy="185" rx="34" ry="38" fill="#fff"/>
+      <g class="eye-pupil">
+        <circle cx="158" cy="192" r="15" fill="#111"/>
+        <circle cx="258" cy="192" r="15" fill="#111"/>
+        <circle cx="163" cy="186" r="5" fill="#fff"/>
+        <circle cx="263" cy="186" r="5" fill="#fff"/>
+      </g>
+      <rect class="brow brow-l" x="115" y="130" width="70" height="14" rx="7" fill="#3c1a00" style="transform-origin:150px 137px"/>
+      <rect class="brow brow-r" x="215" y="130" width="70" height="14" rx="7" fill="#3c1a00" style="transform-origin:250px 137px"/>
+      <ellipse cx="200" cy="228" rx="16" ry="12" fill="#6fbf60"/>
+      <ellipse cx="118" cy="245" rx="22" ry="13" fill="#ff8fa3" opacity=".7"/>
+      <ellipse cx="282" cy="245" rx="22" ry="13" fill="#ff8fa3" opacity=".7"/>
+      <g class="mouth">
+        <path d="M140 255 Q200 320 260 255 Q200 282 140 255 Z" fill="#5a0d1a"/>
+        <path d="M168 280 Q200 300 232 280 Q200 290 168 280 Z" fill="#ff5c7a"/>
+        <rect x="182" y="258" width="16" height="14" rx="3" fill="#fff"/>
+        <rect x="202" y="258" width="16" height="14" rx="3" fill="#fff"/>
+      </g>
+      <g fill="#c68642">
+        <circle class="crumb" cx="175" cy="300" r="5" style="--dx:-14px"/>
+        <circle class="crumb" cx="205" cy="305" r="4" style="--dx:6px"/>
+        <circle class="crumb" cx="225" cy="298" r="5" style="--dx:16px"/>
+      </g>
+      <g transform="translate(300 290) rotate(18)">
+        <path d="M0 0 L60 -20 L60 20 Z" fill="#f4a261"/>
+        <path d="M0 0 L60 -20 L60 20 Z" fill="none" stroke="#e76f51" stroke-width="4"/>
+        <circle cx="38" cy="-4" r="5" fill="#d62828"/>
+        <circle cx="48" cy="8" r="5" fill="#d62828"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="breaking">
+    <div class="tag">ИЗВЪНРЕДНО</div>
+    <div class="sub">ПОСЛЕДНИ НОВИНИ</div>
+  </div>
+
+  <div class="lower-third">
+    <div class="headline" id="headline"><span class="cursor"></span></div>
+  </div>
+
+  <div class="ticker">
+    <div class="label">ГОРЕЩО</div>
+    <div class="track">
+      ★ Властите са безсилни ★ Експерти: „Подобно нещо не е виждано досега“ ★ Хладилниците в региона са в опасност ★ Очаквайте подробности след малко ★ Никой не може да спре ТОЗИ КУЧИ СИН ★ Самолапачко отново удари ★
+    </div>
+  </div>
+
+  <div class="flash-overlay"></div>
+  <button class="replay" id="replay">↻ Отново</button>
+
+  <div class="start" id="start">
+    <button id="go">▶ ПУСНИ НОВИНАТА</button>
+    <p>Звукът е включен. Гласът се синтезира от браузъра — най-добре звучи в Chrome или Edge.</p>
+  </div>
+</div>
+
+<script>
+const LINE_1 = "Никой не може да спре,";
+const LINE_2 = "ТОЗИ КУЧИ СИН";
+const LINE_3 = " - самолапачко";
+
+const screen = document.getElementById("screen");
+const headline = document.getElementById("headline");
+const clock = document.getElementById("clock");
+let ctx;
+let runId = 0;
+
+setInterval(() => {
+  const d = new Date();
+  clock.textContent = d.toLocaleTimeString("bg-BG", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+}, 500);
+
+function audio() {
+  if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+  return ctx;
+}
+
+function boom(t, freq = 55, dur = 1.4, vol = .9) {
+  const c = audio();
+  const o = c.createOscillator();
+  const g = c.createGain();
+  o.type = "sine";
+  o.frequency.setValueAtTime(freq * 2.2, t);
+  o.frequency.exponentialRampToValueAtTime(freq, t + .12);
+  g.gain.setValueAtTime(vol, t);
+  g.gain.exponentialRampToValueAtTime(.001, t + dur);
+  o.connect(g).connect(c.destination);
+  o.start(t); o.stop(t + dur);
+}
+
+function brass(t, freqs, dur = 1.6, vol = .12) {
+  const c = audio();
+  const filter = c.createBiquadFilter();
+  filter.type = "lowpass";
+  filter.frequency.setValueAtTime(400, t);
+  filter.frequency.linearRampToValueAtTime(2200, t + .15);
+  filter.frequency.linearRampToValueAtTime(900, t + dur);
+  const g = c.createGain();
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(vol, t + .05);
+  g.gain.setValueAtTime(vol, t + dur * .6);
+  g.gain.exponentialRampToValueAtTime(.001, t + dur);
+  filter.connect(g).connect(c.destination);
+  freqs.forEach(f => {
+    [-6, 6].forEach(detune => {
+      const o = c.createOscillator();
+      o.type = "sawtooth";
+      o.frequency.value = f;
+      o.detune.value = detune;
+      o.connect(filter);
+      o.start(t); o.stop(t + dur);
+    });
+  });
+}
+
+function drone(t, dur) {
+  const c = audio();
+  const g = c.createGain();
+  g.gain.setValueAtTime(0, t);
+  g.gain.linearRampToValueAtTime(.08, t + 1);
+  g.gain.setValueAtTime(.08, t + dur - 1);
+  g.gain.linearRampToValueAtTime(0, t + dur);
+  g.connect(c.destination);
+  [41.2, 61.7].forEach(f => {
+    const o = c.createOscillator();
+    o.type = "triangle";
+    o.frequency.value = f;
+    o.connect(g);
+    o.start(t); o.stop(t + dur);
+  });
+}
+
+function intro() {
+  const c = audio();
+  const t = c.currentTime + .05;
+  boom(t, 50, 1.8);
+  brass(t, [110, 164.8, 220], 1.2);
+  boom(t + .45, 50, 1.2, .7);
+  brass(t + .45, [116.5, 174.6, 233.1], 1.2);
+  boom(t + .9, 45, 2.5, 1);
+  brass(t + .9, [98, 146.8, 196, 293.7], 2.2, .14);
+  drone(t + 1.2, 11);
+  return 2400;
+}
+
+function hitSound() {
+  const c = audio();
+  const t = c.currentTime;
+  boom(t, 40, 2.2, 1);
+  brass(t, [73.4, 110, 146.8], 1.8, .16);
+}
+
+function pickVoice() {
+  const voices = speechSynthesis.getVoices();
+  const bg = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith("bg"));
+  const male = bg.find(v => /male|мъж|ivan|boris|georgi/i.test(v.name) && !/female/i.test(v.name));
+  return male || bg[0] || voices.find(v => /ru/i.test(v.lang)) || null;
+}
+
+function say(text, opts = {}) {
+  return new Promise(resolve => {
+    if (!("speechSynthesis" in window)) return setTimeout(resolve, 1500);
+    const u = new SpeechSynthesisUtterance(text);
+    const v = pickVoice();
+    if (v) u.voice = v;
+    u.lang = v ? v.lang : "bg-BG";
+    u.pitch = opts.pitch ?? 0.1;
+    u.rate = opts.rate ?? 0.72;
+    u.volume = 1;
+    u.onstart = () => screen.classList.add("talking");
+    const end = () => { screen.classList.remove("talking"); resolve(); };
+    u.onend = end;
+    u.onerror = end;
+    speechSynthesis.speak(u);
+    setTimeout(end, 9000);
+  });
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function render(parts) {
+  headline.innerHTML = parts + '<span class="cursor"></span>';
+}
+
+async function typeInto(prefix, text, cls, id) {
+  for (let i = 1; i <= text.length; i++) {
+    if (id !== runId) return;
+    const piece = cls ? `<span class="${cls}">${text.slice(0, i)}</span>` : text.slice(0, i);
+    render(prefix + piece);
+    await sleep(40);
+  }
+}
+
+async function run() {
+  const id = ++runId;
+  speechSynthesis.cancel();
+  screen.classList.remove("on", "hit", "done", "shake");
+  render("");
+  void screen.offsetWidth;
+
+  const wait = intro();
+  await sleep(300);
+  screen.classList.add("on");
+  await sleep(wait);
+  if (id !== runId) return;
+
+  const t1 = typeInto("", LINE_1, "", id);
+  await say(LINE_1, { pitch: 0.1, rate: 0.7 });
+  await t1;
+  if (id !== runId) return;
+  await sleep(700);
+
+  screen.classList.add("hit", "shake");
+  hitSound();
+  const p1 = LINE_1 + " ";
+  const t2 = typeInto(p1, LINE_2, "caps", id);
+  await say(LINE_2, { pitch: 0, rate: 0.55 });
+  await t2;
+  if (id !== runId) return;
+  await sleep(450);
+
+  const p2 = p1 + `<span class="caps">${LINE_2}</span>`;
+  const t3 = typeInto(p2, LINE_3, "", id);
+  await say("самолапачко", { pitch: 0, rate: 0.6 });
+  await t3;
+  if (id !== runId) return;
+
+  screen.classList.remove("shake");
+  screen.classList.add("done");
+}
+
+document.getElementById("go").addEventListener("click", () => {
+  document.getElementById("start").classList.add("hidden");
+  audio().resume();
+  run();
+});
+document.getElementById("replay").addEventListener("click", run);
+if ("speechSynthesis" in window) speechSynthesis.getVoices();
+</script>
+</body>
+</html>
