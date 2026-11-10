@@ -1,0 +1,12 @@
+out/frames/
+out/audio_mix.wav
+out/previews/
+audio/medium/
+audio/vo_raw.json
+audio/vo_raw.wav
+audio/vo_raw.tsv
+audio/vo_raw.srt
+audio/vo_raw.vtt
+audio/vo_raw.txt
+__pycache__/
+*.pyc
